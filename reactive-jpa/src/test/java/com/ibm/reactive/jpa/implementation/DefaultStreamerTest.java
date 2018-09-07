@@ -17,7 +17,9 @@ import com.ibm.reactive.jpa.lombok.LombokTestUtil;
 import com.ibm.reactive.jpa.resources.Person;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Stream;
 import javax.persistence.PersistenceException;
 import org.hibernate.ScrollMode;
@@ -138,8 +140,51 @@ public class DefaultStreamerTest {
   }
 
   @Test
-  public void testUnsuccessfulExecution()
+  public void testOffsetAndLimit()
       throws SQLException {
+    setupTransactionMocks(null);
+    HashMap<String, Object> parameters = new HashMap<>(1);
+    parameters.put("key", "value");
+    DefaultStreamer<Person> streamer = DefaultStreamer.<Person>builder()
+        .query(QUERY)
+        .type(Person.class)
+        .sessionFactory(factory)
+        .firstResult(0)
+        .maxResults(1)
+        .parameters(parameters)
+        .fetchSize(DefaultStreamer.DEFAULT_FETCH_SIZE)
+        .build();
+    Flux<Person> flux = Flux.create(streamer::stream);
+    StepVerifier.create(flux)
+        .expectNext(PERSON)
+        .expectComplete()
+        .verify();
+  }
+
+
+  @Test
+  public void testSuccessfulWithParameterListExecution()
+      throws SQLException {
+    setupTransactionMocks(null);
+    List<Object> parameters = new ArrayList<>(1);
+    parameters.add("value");
+    DefaultStreamer<Person> streamer = DefaultStreamer.<Person>builder()
+        .query(QUERY)
+        .type(Person.class)
+        .sessionFactory(factory)
+        .maxResults(1)
+        .parameterList(parameters)
+        .fetchSize(DefaultStreamer.DEFAULT_FETCH_SIZE)
+        .build();
+    Flux<Person> flux = Flux.create(streamer::stream);
+    StepVerifier.create(flux)
+        .expectNext(PERSON)
+        .expectComplete()
+        .verify();
+  }
+
+  @Test
+  public void testUnsuccessfulExecution() {
 
     when(factory.openStatelessSession()).thenReturn(session);
     when(session.createQuery(QUERY, Person.class)).thenReturn(query);

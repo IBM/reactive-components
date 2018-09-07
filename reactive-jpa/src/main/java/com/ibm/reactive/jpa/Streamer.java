@@ -8,6 +8,7 @@ package com.ibm.reactive.jpa;
 
 import reactor.core.publisher.FluxSink;
 
+@FunctionalInterface
 public interface Streamer<T> {
 
   void stream(FluxSink<T> sink);

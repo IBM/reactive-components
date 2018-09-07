@@ -83,7 +83,9 @@ public class DatabaseTest {
         () -> ReactiveUtils.stream(null, null),
         () -> ReactiveUtils.stream(service, null),
         () -> database.stream("", Person.class).addParameter(null, null),
-        () -> database.stream("", Person.class).addParameters(null)
+        () -> database.stream("", Person.class).addParameters(null),
+        () -> database.stream("", Person.class).addParameters(null),
+        () -> database.stream("", Person.class).parameterList(null)
     ));
 
   }
@@ -164,6 +166,7 @@ public class DatabaseTest {
         .verifyComplete();
   }
 
+  @SuppressWarnings("unchecked")
   @Test
   public void testFluxExecution() throws SQLException {
 
@@ -225,6 +228,41 @@ public class DatabaseTest {
 
   }
 
+  @Test
+  public void testStreamWithParameterListExecution() throws SQLException {
+    setupStreamTransactionMocks(IsolationLevel.READ_COMMITTED);
+    Database database = new Database(sessionFactory, 1);
+    Flux<Person> stream = database
+        .stream(DefaultStreamerTest.QUERY, Person.class)
+        .isolationLevel(IsolationLevel.READ_COMMITTED)
+        .parameterList(Collections.emptyList())
+        .fetchSize(5)
+        .flux();
+
+    StepVerifier.withVirtualTime(() -> stream)
+        .expectNext(DefaultStreamerTest.PERSON)
+        .verifyComplete();
+
+  }
+
+  @Test
+  public void testStreamWithLimitAndOffset() throws SQLException {
+    setupStreamTransactionMocks(IsolationLevel.READ_COMMITTED);
+    Database database = new Database(sessionFactory, 1);
+    Flux<Person> stream = database
+        .stream(DefaultStreamerTest.QUERY, Person.class)
+        .isolationLevel(IsolationLevel.READ_COMMITTED)
+        .parameterList(Collections.emptyList())
+        .firstResult(0)
+        .maxResults(1)
+        .fetchSize(5)
+        .flux();
+
+    StepVerifier.withVirtualTime(() -> stream)
+        .expectNext(DefaultStreamerTest.PERSON)
+        .verifyComplete();
+
+  }
 
   private void setupStreamTransactionMocks(IsolationLevel level) throws SQLException {
     when(sessionFactory.openStatelessSession()).thenReturn(statelessSession);

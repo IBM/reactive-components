@@ -72,15 +72,18 @@ public class Database {
     return new StreamerBuilder<>(this, query, type);
   }
 
+
   public static class StreamerBuilder<T> {
 
-    private Database database;
-    private String query;
+    private final Database database;
+    private final String query;
     private IsolationLevel isolationLevel;
-    private Class<T> type;
+    private final Class<T> type;
     private int maxResults = -1;
+    private int firstResult = -1;
     private int fetchSize = DefaultStreamer.DEFAULT_FETCH_SIZE;
-    HashMap<String, Object> parameters = new HashMap<>();
+    private final HashMap<String, Object> parameters = new HashMap<>();
+    private List<Object> parameterList;
 
     private StreamerBuilder(Database database, String query, Class<T> type) {
       this.database = database;
@@ -89,16 +92,18 @@ public class Database {
     }
 
     public Flux<T> flux() {
-      DefaultStreamer<T> defaultStreamer = DefaultStreamer.<T>builder()
+      DefaultStreamer<T> streamer = DefaultStreamer.<T>builder()
           .type(type)
           .query(query)
           .sessionFactory(database.sessionFactory)
           .parameters(parameters)
+          .parameterList(parameterList)
           .fetchSize(fetchSize)
           .maxResults(maxResults)
+          .firstResult(firstResult)
           .isolationLevel(isolationLevel)
           .build();
-      return ReactiveUtils.stream(database.service, defaultStreamer);
+      return ReactiveUtils.stream(database.service, streamer);
     }
 
     public StreamerBuilder<T> isolationLevel(IsolationLevel level) {
@@ -116,8 +121,18 @@ public class Database {
       return this;
     }
 
+    public StreamerBuilder<T> parameterList(@NonNull List<Object> parameterList) {
+      this.parameterList = parameterList;
+      return this;
+    }
+
     public StreamerBuilder<T> maxResults(int maxResults) {
       this.maxResults = maxResults;
+      return this;
+    }
+
+    public StreamerBuilder<T> firstResult(int firstResult) {
+      this.firstResult = firstResult;
       return this;
     }
 
@@ -129,8 +144,8 @@ public class Database {
 
   public static class ReactiveExecutionBuilder<T> {
 
-    private Function<EntityManager, T> function;
-    private Database database;
+    private final Function<EntityManager, T> function;
+    private final Database database;
     private TransactionDefinition transaction;
 
     private ReactiveExecutionBuilder(Function<EntityManager, T> function, Database database) {

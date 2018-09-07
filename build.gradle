@@ -1,6 +1,3 @@
-group 'com.ibm.reactive'
-version '0.0.1'
-
 repositories {
     mavenCentral()
 }
@@ -28,11 +25,10 @@ subprojects {
     }
 
     plugins.withId('jacoco') {
-        println 'project' + project
 
         jacocoTestReport {
             reports {
-                html.enabled true
+                html.enabled = true
             }
         }
 
@@ -48,6 +44,8 @@ subprojects {
         }
         jacocoTestCoverageVerification.mustRunAfter test
         jacocoTestReport.mustRunAfter test
+
+        check.dependsOn jacocoTestCoverageVerification
     }
 
     task lint {

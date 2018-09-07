@@ -23,7 +23,7 @@ public abstract class HibernateUtils {
   private HibernateUtils() {
   }
 
-  protected static void addHikariSettings(Map<String, String> settings,
+  static void addHikariSettings(Map<String, String> settings,
       PoolConfiguration configuration) {
     // Maximum waiting time for a connection from the pool
     settings.putIfAbsent("hibernate.hikari.connectionTimeout",

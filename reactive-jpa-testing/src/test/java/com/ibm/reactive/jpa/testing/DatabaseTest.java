@@ -7,14 +7,13 @@
 package com.ibm.reactive.jpa.testing;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import com.ibm.reactive.jpa.Database;
 import com.ibm.reactive.jpa.IsolationLevel;
 import com.ibm.reactive.jpa.TransactionDefinition;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 
 public class DatabaseTest {
@@ -22,15 +21,13 @@ public class DatabaseTest {
   private static final String PACKAGE = DatabaseTest.class.getPackage().getName();
 
   @Test
-  @Ignore
   public void testInstances() {
     Database database = TestUtil.getDatabase(PACKAGE);
     assertNotNull(database);
-    assertTrue(database == TestUtil.getDatabase(PACKAGE));
+    assertSame(database, TestUtil.getDatabase(PACKAGE));
   }
 
   @Test
-  @Ignore
   public void testConcurrentInstances() throws InterruptedException {
     TestUtil.removeDatabase(PACKAGE);
     Runnable r = () -> TestUtil.getDatabase(PACKAGE);
@@ -48,19 +45,17 @@ public class DatabaseTest {
 
 
   @Test
-  @Ignore
   public void removeTestInstances() {
     Database database = TestUtil.getDatabase(PACKAGE);
     assertNotNull(database);
-    assertTrue(database == TestUtil.getDatabase(PACKAGE));
+    assertSame(database, TestUtil.getDatabase(PACKAGE));
     TestUtil.removeDatabase(PACKAGE);
     Database newDatabase = TestUtil.getDatabase(PACKAGE);
     assertNotNull(database);
-    assertFalse(database == newDatabase);
+    assertNotSame(database, newDatabase);
   }
 
   @Test
-  @Ignore
   public void testExecution() {
     Database database = TestUtil.getDatabase(PACKAGE);
     Event event = new Event();

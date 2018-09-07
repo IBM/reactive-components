@@ -42,7 +42,7 @@ public class HibernateUtilsTest {
   private MetadataSources sources;
 
 
-  SessionFactory factory = getSessionFactory();
+  final SessionFactory factory = getSessionFactory();
 
   @Test
   public void testLombokNullValidations() {

@@ -10,6 +10,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.ibm.reactive.jpa.annotation.Integration;
 import com.ibm.reactive.jpa.resources.Person;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.ThreadPoolExecutor;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -23,7 +25,7 @@ import reactor.test.StepVerifier;
 @Integration
 public class IntegrationTest {
 
-  private Database simpleDatabase = TestUtil.getDatabase();
+  private final Database simpleDatabase = TestUtil.getDatabase();
 
   @Test
   public void insert() {
@@ -52,6 +54,7 @@ public class IntegrationTest {
   }
 
   @Test
+  @SuppressWarnings("unchecked")
   public void list() {
     Flux result = simpleDatabase.execute(entityManager -> {
       CriteriaBuilder builder = entityManager.getCriteriaBuilder();
@@ -116,6 +119,25 @@ public class IntegrationTest {
   }
 
   @Test
+  public void streamWithLimitAndOffset() {
+    System.out.println("Stream");
+    Flux<Person> result = simpleDatabase
+        .stream("from PERSON person", Person.class)
+        .fetchSize(1)
+        .maxResults(TestUtil.getPersons().size() - 2)
+        .firstResult(1)
+        .isolationLevel(IsolationLevel.READ_COMMITTED)
+        .flux();
+
+    ArrayList<Person> newList = new ArrayList<>(TestUtil.getPersons());
+    newList.remove(TestUtil.getPersons().size() - 1);
+    newList.remove(0);
+    StepVerifier.create(result)
+        .expectNextSequence(newList)
+        .verifyComplete();
+  }
+
+  @Test
   public void streamSingle() {
     Person first = TestUtil.getPersons().get(0);
     Flux<Person> result = simpleDatabase
@@ -124,6 +146,21 @@ public class IntegrationTest {
         .isolationLevel(IsolationLevel.READ_COMMITTED)
         .addParameter("name", first.getName())
         .addParameter("id", first.getId())
+        .flux();
+
+    StepVerifier.create(result)
+        .expectNext(first)
+        .verifyComplete();
+  }
+
+  @Test
+  public void streamWithParameterList() {
+    Person first = TestUtil.getPersons().get(0);
+    Flux<Person> result = simpleDatabase
+        .stream("from PERSON where name = ?1 and id = ?2", Person.class)
+        .fetchSize(1)
+        .isolationLevel(IsolationLevel.READ_COMMITTED)
+        .parameterList(Arrays.asList(first.getName(), first.getId()))
         .flux();
 
     StepVerifier.create(result)

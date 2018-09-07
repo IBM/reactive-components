@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 @SuppressWarnings("MagicConstant")
 public abstract class JdbcUtils {
 
-  private static Logger logger = LoggerFactory.getLogger(JdbcUtils.class);
+  private static final Logger logger = LoggerFactory.getLogger(JdbcUtils.class);
 
   private JdbcUtils() {
   }

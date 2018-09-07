@@ -171,6 +171,7 @@ public class DefaultExecutionTest {
     verify(entityManager, times(2)).close();
   }
 
+  @SuppressWarnings("unchecked")
   @Test
   public void testUnsuccessfulExecutionWithTransaction()
       throws SQLException {

@@ -1,9 +1,10 @@
 # reactive-components
 Java reactive components
 
-## How to use
+## reactive-jpa
+### How to use
 
-Initialize
+#### Initialize
 ```java
 Map<String, String> settings = new HashMap<>();
 settings.put("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver");
@@ -14,16 +15,16 @@ settings.put("hibernate.dialect", "org.hibernate.dialect.HSQLDialect");
 settings.put("hibernate.hbm2ddl.auto", "update");
 
 List<String> packages = new ArrayList<>(1);
-packages.add(Person.class.getPackage().getName()); // list of java packes with Entities
+packages.add(Person.class.getPackage().getName()); // list of java packages with Entities
 Database database = new Database(settings, packages);
 ```
 
-Transaction
+#### Transaction
 
 ```java
 Person p1 = new Person("Person 1");
 Person p2 = new Person("Person 2");
-simpleDatabase
+Mono<Person> mono = database
     .execute(entityManager -> {
       entityManager.persist(p1);
       entityManager.persist(p2);
@@ -36,16 +37,16 @@ simpleDatabase
             .timeout(5)
             .build()
     )
-    .mono()
-    .block();
+    .mono();
 ```
 
-Stream - Hibernate ScrollableResults 
+#### Stream - Hibernate ScrollableResults
 ```java
-Flux<Person> result = simpleDatabase
-    .stream("from PERSON where name = :name", Person.class)
-    .fetchSize(10)
-    .isolationLevel(IsolationLevel.READ_COMMITTED)
-    .addParameter("name", person.getName())
-    .flux();
+Flux<Person> result = database
+        .stream("from PERSON person", Person.class)
+        .fetchSize(10)
+        .maxResults(100)
+        .firstResult(1)
+        .isolationLevel(IsolationLevel.READ_COMMITTED)
+        .flux();
 ```
