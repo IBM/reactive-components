@@ -1,0 +1,34 @@
+plugins {
+    id 'java'
+}
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+test {
+    useJUnitPlatform()
+}
+
+dependencies {
+
+    compile("io.projectreactor:reactor-core:${reactorVersion}")
+    compile("com.zaxxer:HikariCP:${hikariVersion}")
+    compile("org.hibernate:hibernate-core:${hibernateVersion}")
+    compile("org.hibernate:hibernate-hikaricp:${hibernateVersion}")
+    compile("com.github.v-ladynev:fluent-hibernate-core:${fluentHibernateVersion}")
+    annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+    compileOnly("org.projectlombok:lombok:${lombokVersion}")
+
+    testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
+    testCompile("org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+
+    testCompile("io.projectreactor:reactor-test:${reactorVersion}")
+    testCompile("org.hsqldb:hsqldb:${hsqldbVersion}")
+    testAnnotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+    testCompileOnly("org.projectlombok:lombok:${lombokVersion}")
+    testCompile("org.mockito:mockito-junit-jupiter:${mockitoJupiterVersion}")
+}

@@ -1,0 +1,79 @@
+group 'com.ibm.reactive'
+version '0.0.1'
+
+repositories {
+    mavenCentral()
+}
+
+allprojects {
+    ext {
+        reactorVersion = '3.1.8.RELEASE'
+        hikariVersion = '2.7.8'
+        hibernateVersion = '5.3.6.Final'
+        fluentHibernateVersion = '0.3.1'
+        junitJupiterVersion = '5.2.0'
+        lombokVersion = '1.16.20'
+        hsqldbVersion = '2.4.0'
+        mockitoJupiterVersion = '2.21.0'
+        jacocoVersion = '2.17.0'
+    }
+}
+
+subprojects {
+    version = '0.0.1'
+    group 'com.ibm.reactive'
+    plugins.withId('java') {
+        project.apply plugin: 'checkstyle'
+        project.apply plugin: 'jacoco'
+    }
+
+    plugins.withId('jacoco') {
+        println 'project' + project
+
+        jacocoTestReport {
+            reports {
+                html.enabled true
+            }
+        }
+
+        jacocoTestCoverageVerification {
+            violationRules {
+                rule {
+                    limit {
+                        minimum = 0.95
+                    }
+                }
+                failOnViolation true
+            }
+        }
+        jacocoTestCoverageVerification.mustRunAfter test
+        jacocoTestReport.mustRunAfter test
+    }
+
+    task lint {
+        description 'Linting ...'
+    }
+
+    plugins.withId('checkstyle') {
+        checkstyle {
+            maxErrors 0
+            ignoreFailures false
+            configFile file("$rootProject.projectDir/config/checkstyle/checkstyle.xml")
+            toolVersion "8.8"
+
+        }
+
+        lint.dependsOn checkstyleMain, checkstyleTest
+
+        tasks.withType(Checkstyle).each { checkstyleTask ->
+            checkstyleTask.doLast {
+                reports.all { report ->
+                    def outputFile = report.destination
+                    if (outputFile.exists() && outputFile.text.contains("<error ")) {
+                        throw new GradleException("There were checkstyle warnings! For more info check $outputFile")
+                    }
+                }
+            }
+        }
+    }
+}

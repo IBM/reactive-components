@@ -1,0 +1,4 @@
+rootProject.name = 'reactive-components'
+include 'reactive-jpa'
+include 'reactive-jpa-testing'
+
