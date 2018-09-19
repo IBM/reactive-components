@@ -1,0 +1,26 @@
+language: java
+jdk:
+- oraclejdk8
+os:
+- linux
+branches:
+  only:
+  - master
+before_cache:
+- rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+- rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+  - $HOME/.gradle/caches/
+  - $HOME/.gradle/wrapper/
+before_script:
+- openssl aes-256-cbc -pass pass:$ENCRYPTION_PASSWORD -in $DEPLOY_DIR/pubring.gpg.enc -out $DEPLOY_DIR/pubring.gpg -d
+- openssl aes-256-cbc -pass pass:$ENCRYPTION_PASSWORD -in $DEPLOY_DIR/secring.gpg.enc -out $DEPLOY_DIR/secring.gpg -d
+script:
+- "./gradlew clean build -i --continue"
+after_success:
+- "$DEPLOY_DIR/scripts/publish.sh"
+sudo: required
+env:
+  global:
+  - DEPLOY_DIR="`pwd`/deploy"
