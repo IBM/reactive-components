@@ -52,3 +52,5 @@ Flux<Person> result = database
         .isolationLevel(IsolationLevel.READ_COMMITTED)
         .flux();
 ```
+[![Build Status](https://travis-ci.com/IBM/reactive-components.svg?branch=master)](https://travis-ci.com/IBM/reactive-components)
+[![codecov](https://codecov.io/gh/IBM/reactive-components/branch/master/graph/badge.svg)](https://codecov.io/gh/IBM/reactive-components)
