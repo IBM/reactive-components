@@ -18,7 +18,7 @@ sudo: required
 deploy:
   - provider: script
     skip_cleanup: true
-    script: "./gradlew publish -PSONATYPE_USERNAME=${SONATYPE_USERNAME} -PSONATYPE_PASSWORD=${SONATYPE_PASSWORD} -Psigning.keyId=${GPG_KEYNAME} -Psigning.password=${GPG_PASSPHRASE} -Psigning.secretKeyRingFile=private.key"
+    script: "./gradlew publish -PSONATYPE_USERNAME=${SONATYPE_USERNAME} -PSONATYPE_PASSWORD=${SONATYPE_PASSWORD} -Psigning.keyId=${GPG_KEYNAME} -Psigning.password=${GPG_PASSPHRASE} -Psigning.secretKeyRingFile=${$TRAVIS_BUILD_DIR}/private.key"
     on:
       branch: master
 after_success:
