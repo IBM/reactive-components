@@ -23,7 +23,6 @@ subprojects {
         project.apply plugin: 'checkstyle'
         project.apply plugin: 'jacoco'
         project.apply plugin: 'maven-publish'
-        project.apply plugin: 'signing'
 
         task sourcesJar(type: Jar, dependsOn: classes) {
             classifier = 'sources'
@@ -96,10 +95,6 @@ subprojects {
                     }
                 }
             }
-        }
-
-        signing {
-            sign publishing.publications.maven
         }
     }
 
