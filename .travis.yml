@@ -9,7 +9,7 @@ cache:
   - $HOME/.gradle/caches/
   - $HOME/.gradle/wrapper/
 script:
-  - "./gradlew clean build -i --continue"
+  - ./gradlew build
 
 sudo: required
 deploy:
