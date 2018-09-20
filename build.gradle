@@ -17,11 +17,90 @@ allprojects {
 }
 
 subprojects {
-    version = '0.0.1'
-    group 'com.ibm.reactive'
+    version = '0.0.1-SNAPSHOT'
+    group 'com.ibm.reactivecomponents'
     plugins.withId('java') {
         project.apply plugin: 'checkstyle'
         project.apply plugin: 'jacoco'
+        project.apply plugin: 'maven-publish'
+        project.apply plugin: 'signing'
+
+        task sourcesJar(type: Jar, dependsOn: classes) {
+            classifier = 'sources'
+            from sourceSets.main.allSource
+        }
+
+        javadoc.failOnError = false
+        task javadocJar(type: Jar, dependsOn: javadoc) {
+            classifier = 'javadoc'
+            from javadoc.destinationDir
+        }
+
+        artifacts {
+            archives sourcesJar
+            archives javadocJar
+        }
+        publishing {
+            publications {
+                maven(MavenPublication) {
+                    groupId project.group
+                    artifactId project.name
+                    version project.version
+
+                    from components.java
+
+                    artifact sourcesJar {
+                        classifier "sources"
+                    }
+                    artifact javadocJar {
+                        classifier "javadoc"
+                    }
+                    pom {
+                        name = project.name
+                        description = project.description
+                        url = 'https://github.com/IBM/reactive-components'
+
+                        licenses {
+                            license {
+                                name = 'The Apache License, Version 2.0'
+                                url = 'https://www.apache.org/licenses/LICENSE-2.0'
+                                distribution = 'repo'
+                            }
+                        }
+
+
+                        scm {
+                            connection = 'scm:git:https://github.com/IBM/reactive-components/' + project.name + '.git'
+                            developerConnection = 'scm:git:git@github.com/IBM/reactive-components/' + project.name + '.git'
+                            url = 'https://github.com/IBM/reactive-components/' + project.name + '.git'
+                        }
+
+                        developers {
+                            developer {
+                                id = 'FcoJavierSainz'
+                                name = 'Javier Sainz'
+                                email = 'fco.javier.sainz@hotmail.com'
+                            }
+                        }
+                    }
+                }
+            }
+            repositories {
+                maven {
+                    def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+                    def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
+                    url = project.version.endsWith('-SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+                    credentials {
+                        username = System.getenv('SONATYPE_USERNAME')
+                        password = System.getenv('SONATYPE_PASSWORD')
+                    }
+                }
+            }
+        }
+
+        signing {
+            sign publishing.publications.maven
+        }
     }
 
     plugins.withId('jacoco') {
