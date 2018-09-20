@@ -9,7 +9,7 @@ cache:
   - $HOME/.gradle/caches/
   - $HOME/.gradle/wrapper/
 before_script:
-  - openssl aes-256-cbc -pass pass:$ENCRYPTION_PASSWORD -in secret.gpg -out secret.gpg -d
+  - openssl aes-256-cbc -pass pass:$ENCRYPTION_PASSWORD -in secret.gpg.enc -out secret.gpg -d
 script:
   - ./gradlew build
 
