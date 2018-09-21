@@ -93,8 +93,8 @@ subprojects {
                     def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
                     url = project.version.endsWith('-SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
                     credentials {
-                        username project.getProperty('SONATYPE_USERNAME')
-                        password project.getProperty('SONATYPE_PASSWORD')
+                        username project.hasProperty('SONATYPE_USERNAME') ? project.getProperty('SONATYPE_USERNAME') : ''
+                        password project.hasProperty('SONATYPE_PASSWORD') ? project.getProperty('SONATYPE_PASSWORD') : ''
                     }
                 }
             }
