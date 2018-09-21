@@ -20,6 +20,7 @@ subprojects {
     version = '0.0.1-SNAPSHOT'
     group 'com.ibm.reactivecomponents'
     plugins.withId('java') {
+
         project.apply plugin: 'checkstyle'
         project.apply plugin: 'jacoco'
         project.apply plugin: 'maven-publish'
@@ -40,6 +41,7 @@ subprojects {
             archives sourcesJar
             archives javadocJar
         }
+
         publishing {
             publications {
                 maven(MavenPublication) {
@@ -91,8 +93,8 @@ subprojects {
                     def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
                     url = project.version.endsWith('-SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
                     credentials {
-                        username System.getenv('SONATYPE_USERNAME')
-                        password System.getenv('SONATYPE_PASSWORD')
+                        username project.hasProperty('SONATYPE_USERNAME') ? project.getProperty('SONATYPE_USERNAME') : ''
+                        password project.hasProperty('SONATYPE_PASSWORD') ? project.getProperty('SONATYPE_PASSWORD') : ''
                     }
                 }
             }
