@@ -6,7 +6,53 @@ Library that provide a wrapper for JDBC (Blocking API) with reactive components 
 
 ### How to use
 
+#### Install
+
+**Maven**
+
+```xml
+  <repositories>
+    ...
+    <repository>
+      <id>snapshots-repo</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+    ...
+  </repositories>
+
+  <dependencies>
+    ...
+    <dependency>
+      <groupId>com.ibm.reactivecomponents</groupId>
+      <artifactId>reactive-jpa</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    ...
+  </dependencies>
+```
+
+**Gradle**
+
+```groovy
+repositories {
+    ...
+    maven {
+        url 'https://oss.sonatype.org/content/groups/staging'
+    }
+    ...
+}
+dependencies {
+    ...
+    compile('com.ibm.reactivecomponents:reactive-jpa:0.0.1-SNAPSHOT')
+    ...
+}
+```
+
 #### Initialize
+
 ```java
 Map<String, String> settings = new HashMap<>();
 settings.put("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver");
