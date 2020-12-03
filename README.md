@@ -3,6 +3,7 @@ Java reactive components
 
 ## reactive-jpa
 DEPRECATED!!! PLEASE REVIEW https://hibernate.org/reactive/
+
 Library that provide a wrapper for JDBC (Blocking API) with reactive components (Project Reactor) using Java Persistent API (Hibernate).
 
 ### How to use
